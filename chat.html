@@ -1,0 +1,86 @@
+<script src="/socket.io/socket.io.js"></script>
+<script type="text/javascript">
+  let socket = io();
+  let href = new URL(window.location.href);
+  let params = href.searchParams.get('id');
+  socket.emit('init', params);
+</script>
+<meta name="viewport" content="width=device-width" />
+<style media="screen">
+  #result {
+    width : 80%;
+    height:500px;
+    overflow-y:scroll;
+    overflow-x:hidden;
+    border:1px solid black;
+    padding:10px 30px;
+    margin:10px;
+  }
+
+  .echo {
+    margin:10px;
+  }
+
+  .username {
+    color:mediumaquamarine;
+    margin-right:20px;
+    font-weight:900;
+    font-size:20px;
+  }
+
+  .msg {
+    font-size:20px;
+  }
+</style>
+<div class="echo">
+  <input type="text" id='text' placehoder="Write something...">
+  <button type="submit" id="submit">Send</button>
+</div>
+<script type="text/javascript">
+  document.getElementById('submit').addEventListener('click', function () {
+    enter();
+  });
+</script>
+<div id="result"></div>
+<script type="text/javascript">
+  socket.on('msg event', function (data) {
+    output += ""
+    output = "<span class='username'>" + data.userid + "</span>";
+    output += "<span class='msg'>" + data.msg + "</span>" + "<br>";
+    document.getElementById('result').innerHTML += output;
+    document.getElementById('result').scrollTo(0, document.getElementById('result').scrollHeight);
+  });
+</script>
+<script type="text/javascript">
+  socket.on('initback', function (data) {
+    var msg = data.split('\n');
+    output = "";
+    for (var i = 0; i < msg.length - 1; i++) {
+      var user = msg[i].split("----")[0];
+      var message = msg[i].split("----")[1];
+      output += "<span class='username'>" + user + "</span>";
+      output += "<span class='msg'>" + message + "</span>" + "<br>";
+    }
+    document.getElementById('result').innerHTML = output;
+  });
+
+  window.addEventListener('beforeunload', function (event) {
+    socket.emit('disconnection', params);
+  });
+</script>
+
+<script type="text/javascript">
+  document.getElementById('text').addEventListener('keypress', function (event) {
+    let key = event.which || event.keyCode;
+    if (key == 13) { // enter
+      enter();
+    }
+  });
+
+  let enter = function () {
+    if (document.getElementById('text').value == "") return 0;
+
+    socket.emit('sendmsg', {userid: params, msg: document.getElementById('text').value});
+    document.getElementById('text').value = "";
+  };
+</script>
