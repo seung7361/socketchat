@@ -48,7 +48,7 @@
     output = "<span class='username'>" + data.userid + "</span>";
     output += "<span class='msg'>" + data.msg + "</span>" + "<br>";
     document.getElementById('result').innerHTML += output;
-    document.getElementById('result').scrollTo(0, document.getElementById('result').scrollHeight);
+    document.getElementById('result').scrollTo(0, document.getElementById('result').scrollHeight); // scrolldown
   });
 </script>
 <script type="text/javascript">
@@ -62,6 +62,7 @@
       output += "<span class='msg'>" + message + "</span>" + "<br>";
     }
     document.getElementById('result').innerHTML = output;
+    document.getElementById('result').scrollTo(0, document.getElementById('result').scrollHeight);
   });
 
   window.addEventListener('beforeunload', function (event) {
